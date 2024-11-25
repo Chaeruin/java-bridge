@@ -1,5 +1,7 @@
 package bridge;
 
+import java.util.List;
+
 /**
  * 다리 건너기 게임을 관리하는 클래스
  */
@@ -10,7 +12,28 @@ public class BridgeGame {
      * <p>
      * 이동을 위해 필요한 메서드의 반환 타입(return type), 인자(parameter)는 자유롭게 추가하거나 변경할 수 있다.
      */
-    public void move() {
+    public String move(List<String> madeBridge, String upOrDown, int idx) {
+        String order = madeBridge.get(idx - 1);
+        if (order.equals(upOrDown)) {
+            return "O";
+        }
+        return "X";
+    }
+
+    /**
+     * @param upOrDown - 이동 하려고 했던 방향 U/D
+     * @param move     - 이동 결과 O인지 X인지
+     * @return 결과 브릿지 [0][] - 위 / [1][] - 아래
+     */
+    public List<List<String>> movingResult(List<List<String>> movingStatus, String upOrDown, String move) {
+        if (upOrDown.equals("U")) {
+            movingStatus.get(0).add(move);
+            movingStatus.get(1).add(" ");
+        } else if (upOrDown.equals("D")) {
+            movingStatus.get(0).add(" ");
+            movingStatus.get(1).add(move);
+        }
+        return movingStatus;
     }
 
     /**
@@ -20,4 +43,5 @@ public class BridgeGame {
      */
     public void retry() {
     }
+
 }
