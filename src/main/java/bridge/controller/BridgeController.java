@@ -1,9 +1,11 @@
 package bridge.controller;
 
+import bridge.BridgeGame;
 import bridge.BridgeMaker;
 import bridge.utils.InputParser;
 import bridge.view.InputView;
 import bridge.view.OutputView;
+import java.util.LinkedList;
 import java.util.List;
 
 public class BridgeController {
@@ -11,26 +13,56 @@ public class BridgeController {
     private final InputView inputView;
     private final OutputView outputView;
     private final BridgeMaker bridgeMaker;
+    private final BridgeGame bridgeGame;
 
-    public BridgeController(InputView inputView, OutputView outputView, BridgeMaker bridgeMaker) {
+    public BridgeController(InputView inputView, OutputView outputView, BridgeMaker bridgeMaker,
+                            BridgeGame bridgeGame) {
         this.inputView = inputView;
         this.outputView = outputView;
         this.bridgeMaker = bridgeMaker;
+        this.bridgeGame = bridgeGame;
     }
 
     public void run() {
         outputView.printStart();
-
         // restart 해도 유지
-        List<String> madeBridge = bridgeMaker.makeBridge(inputSizeHandler());
+        int size;
+        List<String> madeBridge = bridgeMaker.makeBridge(size = inputSizeHandler());
+
+        int cnt = 1, idx = 0;
+        List<List<String>> movingStatus = initMovingStatus();
 
         while (true) {
             String upOrDown = inputUpDownHandler();
+            movingStatus = bridgeGame.movingResult(movingStatus, upOrDown,
+                    bridgeGame.move(madeBridge, upOrDown, idx++));
 
-            if (inputRestartOrQuitHandler().equals("Q")) { // 조건 :: 이동칸이 X 나타난거 추가
+            // 출력
+            outputView.printMap(movingStatus);
+            outputView.printEnter();
+
+            if (movingStatus.get(0).contains("X") || movingStatus.get(1).contains("X")) {
+                String restartOrQuit = inputRestartOrQuitHandler();
+                if (restartOrQuit.equals("R")) {
+                    cnt = bridgeGame.retry(movingStatus, cnt);
+                    continue;
+                } else if (restartOrQuit.equals("Q")) {
+                    break;
+                }
+            }
+            if (idx == size) {
                 break;
             }
         }
+
+        outputView.printResult(movingStatus, cnt, bridgeGame.isSucessOrFail(movingStatus));
+    }
+
+    public List<List<String>> initMovingStatus() {
+        List<List<String>> movingStatus = new LinkedList<>();
+        movingStatus.add(new LinkedList<>());
+        movingStatus.add(new LinkedList<>());
+        return movingStatus;
     }
 
     public int inputSizeHandler() {
