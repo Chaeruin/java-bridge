@@ -44,7 +44,9 @@ public class BridgeController {
             if (movingStatus.get(0).contains("X") || movingStatus.get(1).contains("X")) {
                 String restartOrQuit = inputRestartOrQuitHandler();
                 if (restartOrQuit.equals("R")) {
-                    cnt = bridgeGame.retry(movingStatus, cnt);
+                    cnt = bridgeGame.retry(cnt);
+                    idx = 0;
+                    movingStatus = initMovingStatus();
                     continue;
                 } else if (restartOrQuit.equals("Q")) {
                     break;

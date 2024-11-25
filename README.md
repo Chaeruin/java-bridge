@@ -7,6 +7,8 @@
 12:00 BridgeMaker, bridgeGame 설계 및 BridgeController 대충 설계 완료<br>
 -> 12:00 ~ 12:10 잠시 휴식 <br>
 12:50 Controller 및 outputView 설계 구현 완성, 테케 통과 (총 2시간 20분 소요(휴식 포함)) <br>
+13:10 testcode 작성, coverage 100퍼 달성 (단위테스트는 공부 좀 더 해야될듯) <br>
+(총 2시간 40분 소요) <br>
 
 <br><br>
 
