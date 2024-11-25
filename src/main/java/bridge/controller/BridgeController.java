@@ -23,14 +23,15 @@ public class BridgeController {
         this.bridgeGame = bridgeGame;
     }
 
+    static int cnt = 1, idx = 0, size;
+    static List<List<String>> movingStatus;
+
     public void run() {
         outputView.printStart();
         // restart 해도 유지
-        int size;
         List<String> madeBridge = bridgeMaker.makeBridge(size = inputSizeHandler());
 
-        int cnt = 1, idx = 0;
-        List<List<String>> movingStatus = initMovingStatus();
+        movingStatus = initMovingStatus();
 
         while (true) {
             String upOrDown = inputUpDownHandler();
@@ -41,23 +42,29 @@ public class BridgeController {
             outputView.printMap(movingStatus);
             outputView.printEnter();
 
-            if (movingStatus.get(0).contains("X") || movingStatus.get(1).contains("X")) {
-                String restartOrQuit = inputRestartOrQuitHandler();
-                if (restartOrQuit.equals("R")) {
-                    cnt = bridgeGame.retry(cnt);
-                    idx = 0;
-                    movingStatus = initMovingStatus();
-                    continue;
-                } else if (restartOrQuit.equals("Q")) {
-                    break;
-                }
-            }
-            if (idx == size) {
+            if (restartOrQuitNow()) {
+                break;
+            } else if (idx == size && bridgeGame.isSucessOrFail(movingStatus).equals("성공")) {
                 break;
             }
         }
 
         outputView.printResult(movingStatus, cnt, bridgeGame.isSucessOrFail(movingStatus));
+    }
+
+    public boolean restartOrQuitNow() {
+        if (bridgeGame.isSucessOrFail(movingStatus).equals("실패")) {
+            String restartOrQuit = inputRestartOrQuitHandler();
+            if (restartOrQuit.equals("R")) {
+                cnt = bridgeGame.retry(cnt);
+                idx = 0;
+                movingStatus = initMovingStatus();
+                return false;
+            } else if (restartOrQuit.equals("Q")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<List<String>> initMovingStatus() {
